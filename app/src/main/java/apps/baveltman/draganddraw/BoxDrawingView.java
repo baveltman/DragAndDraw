@@ -71,38 +71,47 @@ public class BoxDrawingView extends View {
     }
 
     public boolean onTouchEvent(MotionEvent event) {
-        PointF curr = new PointF(event.getX(), event.getY());
 
-        Log.i(TAG, "Received event at x=" + curr.x +
-                ", y=" + curr.y + ":");
+        if (event.getPointerCount() == 2){
+            //clear screen
+            mBoxes = new ArrayList<Box>();
+            invalidate();
+        } else {
+            //draw box
+            PointF curr = new PointF(event.getX(), event.getY());
 
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                Log.i(TAG, " ACTION_DOWN");
-                // Reset drawing state and create a new box for view
-                mCurrentBox = new Box(curr);
-                mBoxes.add(mCurrentBox);
-                break;
+            Log.i(TAG, "Received event at x=" + curr.x +
+                    ", y=" + curr.y + ":");
 
-            case MotionEvent.ACTION_MOVE:
-                Log.i(TAG, " ACTION_MOVE");
-                if (mCurrentBox != null){
-                    mCurrentBox.setCurrent(curr);
-                    //call invalidate to force redrawing of view with new box
-                    invalidate();
-                }
-                break;
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    Log.i(TAG, " ACTION_DOWN");
+                    // Reset drawing state and create a new box for view
+                    mCurrentBox = new Box(curr);
+                    mBoxes.add(mCurrentBox);
+                    break;
 
-            case MotionEvent.ACTION_UP:
-                Log.i(TAG, " ACTION_UP");
-                mCurrentBox = null;
-                break;
+                case MotionEvent.ACTION_MOVE:
+                    Log.i(TAG, " ACTION_MOVE");
+                    if (mCurrentBox != null) {
+                        mCurrentBox.setCurrent(curr);
+                        //call invalidate to force redrawing of view with new box
+                        invalidate();
+                    }
+                    break;
 
-            case MotionEvent.ACTION_CANCEL:
-                Log.i(TAG, " ACTION_CANCEL");
-                mCurrentBox = null;
-                break;
+                case MotionEvent.ACTION_UP:
+                    Log.i(TAG, " ACTION_UP");
+                    mCurrentBox = null;
+                    break;
+
+                case MotionEvent.ACTION_CANCEL:
+                    Log.i(TAG, " ACTION_CANCEL");
+                    mCurrentBox = null;
+                    break;
+            }
         }
+
         return true;
     }
 
