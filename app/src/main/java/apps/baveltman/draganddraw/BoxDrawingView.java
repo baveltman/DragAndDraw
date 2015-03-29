@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -17,6 +19,8 @@ import java.util.ArrayList;
 public class BoxDrawingView extends View {
 
     public static final String TAG = "BoxDrawingView";
+    public static final String KEY_BOXES = "apps.baveltman.DragAndDraw.KEY_BOXES";
+    public static final String KEY_STATE = "apps.baveltman.DragAndDraw.KEY_STATE";
 
     private Box mCurrentBox;
     private ArrayList<Box> mBoxes = new ArrayList<Box>();
@@ -39,6 +43,31 @@ public class BoxDrawingView extends View {
         // Paint the background off-white
         mBackgroundPaint = new Paint();
         mBackgroundPaint.setColor(0xfff8efe0);
+
+    }
+
+    @Override
+    public Parcelable onSaveInstanceState() {
+
+        Bundle savedInstanceState = new Bundle();
+        savedInstanceState.putParcelableArrayList(KEY_BOXES, mBoxes);
+        savedInstanceState.putParcelable(KEY_STATE, super.onSaveInstanceState());
+        return savedInstanceState;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable savedInstanceState) {
+
+
+        if (savedInstanceState == null) return;
+
+        if (savedInstanceState instanceof Bundle) {
+            Bundle savedState = (Bundle) savedInstanceState;
+            mBoxes = savedState.getParcelableArrayList(KEY_BOXES);
+
+            Parcelable state = savedState.getParcelable(KEY_STATE);
+            super.onRestoreInstanceState(state);
+        }
     }
 
     public boolean onTouchEvent(MotionEvent event) {
